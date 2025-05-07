@@ -1,0 +1,386 @@
+(mmugl) zwt@zwt-MS-7D86:~/CS598-DL4H-Final-Project/mmugl-main$ python dev/run_training_concepts.py   --name diagnosis_test   --logdir dev/runs   --data_dir data   --code_mappings data/code_mappings   --epochs 2   --num_workers 2   --grad_acc 1   --batch_size 4   --down_batch_size 2   --down_grad_acc 2   --down_learning_rate 0.0001   --down_es 5   --embedding_dim 128   --graph_num_layers 1   --graph_num_filters 1   --gnn_operator SAGEConv   --attention_heads 1   --feedforward_dim 128   --num_blocks 1   --agg_mask_loss 0.25   --mlp_dim 64   --mlp_num_layers 1   --freeze_embeddings   --store_pretrainmodel   --store_downmodel   --pretrain   --pretrain_es loss_total   --pretrain_patience 3   --split_mode cgl   --icd_codes data/disease_codes_all.txt   --down_icd_codes data/cgl_mimic3_disease_codes.txt   --atc_codes data/med_codes_all.txt   --diagnosis_csv ../MIMIC-III/DIAGNOSES_ICD.csv   --prescription_csv ../MIMIC-III/PRESCRIPTIONS.csv   --admission_csv ../MIMIC-III/ADMISSIONS.csv   --umls_graph data/umls_graph.pkl   --notes_concepts data/noteevents_test_run_jaccard_0.9_w6.pkl   --max_visit_text_length 1279   --downstream_cgl   --cgl_num_contexts 4   --cgl_task diagnosis   --down_mlp_dim 0   --down_mlp_num_layers 0   --random_state 1111   --verbose
+INFO ========================================
+INFO Start Training script
+INFO Host: zwt-MS-7D86
+INFO Torch device: NVIDIA GeForce RTX 4090
+INFO GPU Memory: 23.5 GB
+INFO Workers: 2
+INFO ========================================
+Global seed set to 1111
+INFO Load UMLS graph from: data/umls_graph.pkl
+INFO [ICD] Processing diagnosis table
+INFO [ICD] Table raw shape: (651047, 5)
+INFO [ICD] Table processed shape: (650940, 3)
+INFO [SPLIT cgl] train suggested: 6000
+INFO [SPLIT cgl] train loaded: 45171
+INFO [SPLIT cgl] intersect: 6000
+INFO [SPLIT] Created data splits, train: 45171, val: 125
+INFO Parsed 6984 diagnosis codes from provided file
+INFO Parsed 348 prescription codes from provided file
+INFO [DATA]----- TRAIN -----
+INFO [ICD] Processing diagnosis table
+INFO [ICD] Table raw shape: (651047, 5)
+INFO [ICD] Table processed shape: (650940, 3)
+INFO [ICD] Filtered patient ids, filtered shape: (609110, 3)
+INFO [CHECK 1] patient ids: 45171
+INFO [ICD] Remove non-vocabulary (size: 6984) codes, post: (609110, 3)
+INFO [CHECK 2] patient ids: 45171
+INFO [ATC] Processing prescriptions table
+/home/zwt/CS598-DL4H-Final-Project/mmugl-main/kg/kg/data/processing.py:187: DtypeWarning: Columns (11) have mixed types. Specify dtype option on import or set low_memory=False.
+  med_pd = pd.read_csv(file, dtype=ndc_types)
+INFO [ATC] Table raw shape: (4156450, 19)
+INFO [ATC] Preprocessed shape: (2987420, 5)
+INFO [ATC] Performed NDC -> RxNorm mapping, shape (2987420, 6)
+INFO [ATC] Performed NDC -> ATC4 mapping, final shape (1988696, 5)
+INFO Match (SUBJECT_ID, HADM_ID), diagnosis: (559813, 3), med: (1858182, 5)
+INFO [CHECK 3] patient ids: 37819
+INFO Grouping codes ICD9_CODE for (patients, admission), post shape (46958, 3)
+INFO Grouping codes ATC4 for (patients, admission), post shape (46958, 3)
+INFO [CHECK 4] patient ids: 37819
+INFO Filtered patients to `ICD9_CODE` count range (1, inf), filtered shape (46958, 3)
+INFO Filtered patients to `ATC4` count range (1, inf), filtered shape (46958, 3)
+INFO [CHECK 5] patient ids: 37819
+INFO Merged diagnosis and prescription codes, shape: (46958, 4)
+INFO [CHECK 6] patient ids: 37819
+INFO Max #codes per visit, ICD: 39, ATC: 78
+INFO  > configured: 63, final: 64
+INFO [UMLS] UMLS graph data on input
+INFO [CONCEPTS] Loading note concepts from: data/noteevents_test_run_jaccard_0.9_w6.pkl
+INFO [CONCEPTS] 36 patients
+INFO [CONCEPTS] maximum visit text length: 1279
+INFO [CONCEPTS] Flattening and tokenizing notes text concepts
+100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 36/36 [00:00<00:00, 3965.41it/s]
+INFO [CONCEPTS] Pretokenized notes concepts for 36 patients
+INFO [DATASET] output text targets: False
+INFO [DATA]----- VAL -----
+INFO [ICD] Processing diagnosis table
+INFO [ICD] Table raw shape: (651047, 5)
+INFO [ICD] Table processed shape: (650940, 3)
+INFO [ICD] Filtered patient ids, filtered shape: (3942, 3)
+INFO [CHECK 1] patient ids: 125
+INFO [ICD] Remove non-vocabulary (size: 6984) codes, post: (3942, 3)
+INFO [CHECK 2] patient ids: 125
+INFO [ATC] Processing prescriptions table
+/home/zwt/CS598-DL4H-Final-Project/mmugl-main/kg/kg/data/processing.py:187: DtypeWarning: Columns (11) have mixed types. Specify dtype option on import or set low_memory=False.
+  med_pd = pd.read_csv(file, dtype=ndc_types)
+INFO [ATC] Table raw shape: (4156450, 19)
+INFO [ATC] Preprocessed shape: (2987420, 5)
+INFO [ATC] Performed NDC -> RxNorm mapping, shape (2987420, 6)
+INFO [ATC] Performed NDC -> ATC4 mapping, final shape (1988696, 5)
+INFO Match (SUBJECT_ID, HADM_ID), diagnosis: (3702, 3), med: (12325, 5)
+INFO [CHECK 3] patient ids: 119
+INFO Grouping codes ICD9_CODE for (patients, admission), post shape (289, 3)
+INFO Grouping codes ATC4 for (patients, admission), post shape (289, 3)
+INFO [CHECK 4] patient ids: 119
+INFO Filtered patients to `ICD9_CODE` count range (1, inf), filtered shape (289, 3)
+INFO Filtered patients to `ATC4` count range (1, inf), filtered shape (289, 3)
+INFO [CHECK 5] patient ids: 119
+INFO Merged diagnosis and prescription codes, shape: (289, 4)
+INFO [CHECK 6] patient ids: 119
+INFO Use existing tokenizer
+INFO Max #codes per visit, ICD: 39, ATC: 48
+INFO  > configured: 63, final: 64
+INFO [UMLS] UMLS graph data on input
+INFO [CONCEPTS] Loading note concepts from: data/noteevents_test_run_jaccard_0.9_w6.pkl
+INFO [CONCEPTS] 36 patients
+INFO [CONCEPTS] maximum visit text length: 1279
+INFO [CONCEPTS] Flattening and tokenizing notes text concepts
+100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 36/36 [00:00<00:00, 4140.02it/s]
+INFO [CONCEPTS] Pretokenized notes concepts for 36 patients
+INFO [DATASET] output text targets: False
+INFO [NN] Training with text: True, targets: False
+INFO [NN] cache graph forward pass: True
+INFO [NN] UMLS graph embedding module
+INFO [UMLS] loaded graph data, hops: 0
+INFO [GRAPH] using SapBert embeddings as initialization
+INFO [UMLS] use provided CUI vocabulary: 12295
+INFO [UMLS] loaded 50724 edges
+INFO [UMLS] Built SapBERT feature matrix: torch.Size([12295, 768])
+INFO UMLSGraphEmbedding has 12295 nodes
+INFO [GRAPH] Node aggregation: sum
+INFO Built: `UMLSGNN` 1 layers, 1 filters: SAGEConv:128
+INFO [EMBEDDING] Final embedding size: (3, 12292) = 12295
+INFO [INIT] DONT initialize co node embeddings
+INFO [NN] Initializing heads for aggregation loss
+INFO ----- Model -----
+INFO Embedding dimension: 128
+INFO GNN operator: SAGEConv
+INFO Graph layers: 1, staged: False
+INFO Transformer heads: 1, mlp: 128, blocks: 1
+INFO MLP dim: 64, layers: 1
+INFO Masked loss alpha: 0.25
+INFO Hungarian set loss alpha: 0.0
+INFO Co-occurrence loss alpha: 0.0
+INFO co-nodes latent space: False
+INFO Decoder Network: False
+INFO ----- ----- -----
+INFO Tensorboard logs at: dev/runs/diagnosis_test_20250507-0129
+INFO ========================================
+INFO Run Training for 2 epochs
+INFO Num batches: 11740, size: 4
+INFO Val batches: 73
+INFO Learning rate: 0.0005
+INFO ========================================
+INFO [TRAIN] early stopping on val/loss_total, patience 3
+INFO [TRAINER] Sampling 4 triplets per anchor id
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+HPU available: False, using: 0 HPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0,1]
+
+  | Name           | Type                            | Params
+-------------------------------------------------------------------
+0 | pretrain_model | JointCodePretrainingTransformer | 11.3 M
+1 | loss           | BCEWithLogitsLoss               | 0     
+-------------------------------------------------------------------
+1.7 M     Trainable params
+9.5 M     Non-trainable params
+11.3 M    Total params
+45.158    Total estimated model params size (MB)
+Sanity Checking: 0it [00:00, ?it/s]/home/zwt/miniconda3/envs/mmugl/lib/python3.8/site-packages/pytorch_lightning/trainer/connectors/data_connector.py:240: PossibleUserWarning: The dataloader, val_dataloader 0, does not have many workers which may be a bottleneck. Consider increasing the value of the `num_workers` argument` (try 32 which is the number of cpus on this machine) in the `DataLoader` init to improve performance.
+  rank_zero_warn(
+/home/zwt/miniconda3/envs/mmugl/lib/python3.8/site-packages/pytorch_lightning/trainer/connectors/data_connector.py:240: PossibleUserWarning: The dataloader, train_dataloader, does not have many workers which may be a bottleneck. Consider increasing the value of the `num_workers` argument` (try 32 which is the number of cpus on this machine) in the `DataLoader` init to improve performance.
+  rank_zero_warn(
+Epoch 1: 100%|███████████████████████████████████| 11813/11813 [01:23<00:00, 142.32it/s, loss=0.198, v_num=0, train/batch_loss=0.197, train/loss=0.204, val/loss=0.213, val/loss_total=0.213]
+INFO Load best validation loss model: dev/runs/tb/version_0/checkpoints/epoch=1-step=23480.ckpt                                                  
+INFO Missing keys: []
+INFO Unexpected keys: []
+INFO Store pretrain model to dev/runs/model
+INFO Running final validation
+100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 73/73 [00:00<00:00, 210.51it/s]
+INFO [d2d] jaccard: 0.218 f1: 0.337 prauc: 0.440 
+INFO [p2d] jaccard: 0.070 f1: 0.119 prauc: 0.252 
+INFO [p2p] jaccard: 0.678 f1: 0.802 prauc: 0.877 
+INFO [d2p] jaccard: 0.395 f1: 0.555 prauc: 0.663 
+INFO ========================================
+INFO Finished Pretraining Training
+INFO Trained for 2 epochs
+INFO Val Jaccard       : 0.340
+INFO Val F1            : 0.453
+INFO Val AuPRC         : 0.558
+INFO ========================================
+INFO Layer: UMLSGraphEmbedding(
+  (cui_feature_projector): Linear(in_features=768, out_features=128, bias=True)
+  (gnn): UMLSGNN(
+    (graph_convs): ModuleList(
+      (0): ModuleList(
+        (0): HeteroConv(num_relations=1)
+      )
+    )
+    (pool_stacks): ModuleList()
+  )
+) frozen, (8 params frozen)
+INFO Set downstream batchsize to 2
+INFO 
+INFO ========================================
+INFO Performing downstream DISEASE training
+INFO Task: diagnosis
+INFO With text: True
+INFO eICU: False
+INFO ========================================
+INFO [CGL] Parsed 4825 diagnosis codes from provided file
+INFO [DATA]----- TRAIN -----
+WARNING [DATASET] keeping no med patients: True
+INFO [ICD] Processing diagnosis table
+INFO [ICD] Table raw shape: (651047, 5)
+INFO [ICD] Table processed shape: (650940, 3)
+INFO [ICD] Filtered patient ids, filtered shape: (609110, 3)
+INFO [CHECK 1] patient ids: 45171
+INFO [ICD] Remove non-vocabulary (size: 6984) codes, post: (609110, 3)
+INFO [CHECK 2] patient ids: 45171
+INFO [ATC] Processing prescriptions table
+/home/zwt/CS598-DL4H-Final-Project/mmugl-main/kg/kg/data/processing.py:187: DtypeWarning: Columns (11) have mixed types. Specify dtype option on import or set low_memory=False.
+  med_pd = pd.read_csv(file, dtype=ndc_types)
+INFO [ATC] Table raw shape: (4156450, 19)
+INFO [ATC] Preprocessed shape: (2987420, 5)
+INFO [ATC] Performed NDC -> RxNorm mapping, shape (2987420, 6)
+INFO [ATC] Performed NDC -> ATC4 mapping, final shape (1988696, 5)
+INFO Filtered visit range (1, inf), final shape: (1988696, 5)
+INFO [ATC] Filtered patient ids, filtered shape: (1858217, 5)
+INFO [CHECK 3] patient ids: 45171
+INFO Grouping codes ICD9_CODE for (patients, admission), post shape (55610, 3)
+INFO Grouping codes ATC4 for (patients, admission), post shape (46962, 3)
+INFO [CHECK 4] patient ids: 45171
+INFO Filtered patients to `ICD9_CODE` count range (1, inf), filtered shape (55610, 3)
+INFO Filtered patients to `ATC4` count range (1, inf), filtered shape (46962, 3)
+INFO [CHECK 5] patient ids: 45171
+INFO Merged diagnosis and prescription codes, shape: (55614, 4)
+INFO [CHECK 6] patient ids: 45171
+INFO [ATC] imputing patients without prescriptions
+INFO Use existing tokenizer
+INFO Max #codes per visit, ICD: 39, ATC: 78
+INFO  > configured: 63, final: 64
+INFO [UMLS] UMLS graph data on input
+INFO [CONCEPTS] Loading note concepts from: data/noteevents_test_run_jaccard_0.9_w6.pkl
+INFO [CONCEPTS] 36 patients
+INFO [CONCEPTS] maximum visit text length: 1279
+INFO [CONCEPTS] Flattening and tokenizing notes text concepts
+100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 36/36 [00:00<00:00, 3815.12it/s]
+INFO [CONCEPTS] Pretokenized notes concepts for 36 patients
+INFO [DATASET] output text targets: False
+INFO [TARGET] Considering distinct target code set
+INFO [TARGET] Instatiating new target tokenizer, d: 4825
+INFO Reformating for visit sequence learning based on: ../MIMIC-III/ADMISSIONS.csv
+100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 45171/45171 [00:06<00:00, 6709.17it/s]
+INFO Reformated data for visit sequence learning, num records: 6156
+INFO Maximum number of visits: 42
+INFO [DATA]----- VAL -----
+WARNING [DATASET] keeping no med patients: True
+INFO [ICD] Processing diagnosis table
+INFO [ICD] Table raw shape: (651047, 5)
+INFO [ICD] Table processed shape: (650940, 3)
+INFO [ICD] Filtered patient ids, filtered shape: (3942, 3)
+INFO [CHECK 1] patient ids: 125
+INFO [ICD] Remove non-vocabulary (size: 6984) codes, post: (3942, 3)
+INFO [CHECK 2] patient ids: 125
+INFO [ATC] Processing prescriptions table
+/home/zwt/CS598-DL4H-Final-Project/mmugl-main/kg/kg/data/processing.py:187: DtypeWarning: Columns (11) have mixed types. Specify dtype option on import or set low_memory=False.
+  med_pd = pd.read_csv(file, dtype=ndc_types)
+INFO [ATC] Table raw shape: (4156450, 19)
+INFO [ATC] Preprocessed shape: (2987420, 5)
+INFO [ATC] Performed NDC -> RxNorm mapping, shape (2987420, 6)
+INFO [ATC] Performed NDC -> ATC4 mapping, final shape (1988696, 5)
+INFO Filtered visit range (1, inf), final shape: (1988696, 5)
+INFO [ATC] Filtered patient ids, filtered shape: (12325, 5)
+INFO [CHECK 3] patient ids: 125
+INFO Grouping codes ICD9_CODE for (patients, admission), post shape (318, 3)
+INFO Grouping codes ATC4 for (patients, admission), post shape (289, 3)
+INFO [CHECK 4] patient ids: 125
+INFO Filtered patients to `ICD9_CODE` count range (1, inf), filtered shape (318, 3)
+INFO Filtered patients to `ATC4` count range (1, inf), filtered shape (289, 3)
+INFO [CHECK 5] patient ids: 125
+INFO Merged diagnosis and prescription codes, shape: (318, 4)
+INFO [CHECK 6] patient ids: 125
+INFO [ATC] imputing patients without prescriptions
+INFO Use existing tokenizer
+INFO Max #codes per visit, ICD: 39, ATC: 48
+INFO  > configured: 63, final: 64
+INFO [UMLS] UMLS graph data on input
+INFO [CONCEPTS] Loading note concepts from: data/noteevents_test_run_jaccard_0.9_w6.pkl
+INFO [CONCEPTS] 36 patients
+INFO [CONCEPTS] maximum visit text length: 1279
+INFO [CONCEPTS] Flattening and tokenizing notes text concepts
+100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 36/36 [00:00<00:00, 4114.42it/s]
+INFO [CONCEPTS] Pretokenized notes concepts for 36 patients
+INFO [DATASET] output text targets: False
+INFO [TARGET] Use existing target tokenizer
+INFO Reformating for visit sequence learning based on: ../MIMIC-III/ADMISSIONS.csv
+100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 125/125 [00:00<00:00, 5700.52it/s]
+INFO Reformated data for visit sequence learning, num records: 125
+INFO Maximum number of visits: 42
+INFO [DATA]----- TEST -----
+WARNING [DATASET] keeping no med patients: True
+INFO [ICD] Processing diagnosis table
+INFO [ICD] Table raw shape: (651047, 5)
+INFO [ICD] Table processed shape: (650940, 3)
+INFO [ICD] Filtered patient ids, filtered shape: (37888, 3)
+INFO [CHECK 1] patient ids: 1221
+INFO [ICD] Remove non-vocabulary (size: 6984) codes, post: (37888, 3)
+INFO [CHECK 2] patient ids: 1221
+INFO [ATC] Processing prescriptions table
+/home/zwt/CS598-DL4H-Final-Project/mmugl-main/kg/kg/data/processing.py:187: DtypeWarning: Columns (11) have mixed types. Specify dtype option on import or set low_memory=False.
+  med_pd = pd.read_csv(file, dtype=ndc_types)
+INFO [ATC] Table raw shape: (4156450, 19)
+INFO [ATC] Preprocessed shape: (2987420, 5)
+INFO [ATC] Performed NDC -> RxNorm mapping, shape (2987420, 6)
+INFO [ATC] Performed NDC -> ATC4 mapping, final shape (1988696, 5)
+INFO Filtered visit range (1, inf), final shape: (1988696, 5)
+INFO [ATC] Filtered patient ids, filtered shape: (118153, 5)
+INFO [CHECK 3] patient ids: 1221
+INFO Grouping codes ICD9_CODE for (patients, admission), post shape (3001, 3)
+INFO Grouping codes ATC4 for (patients, admission), post shape (2677, 3)
+INFO [CHECK 4] patient ids: 1221
+INFO Filtered patients to `ICD9_CODE` count range (1, inf), filtered shape (3001, 3)
+INFO Filtered patients to `ATC4` count range (1, inf), filtered shape (2677, 3)
+INFO [CHECK 5] patient ids: 1221
+INFO Merged diagnosis and prescription codes, shape: (3001, 4)
+INFO [CHECK 6] patient ids: 1221
+INFO [ATC] imputing patients without prescriptions
+INFO Use existing tokenizer
+INFO Max #codes per visit, ICD: 39, ATC: 58
+INFO  > configured: 63, final: 64
+INFO [UMLS] UMLS graph data on input
+INFO [CONCEPTS] Loading note concepts from: data/noteevents_test_run_jaccard_0.9_w6.pkl
+INFO [CONCEPTS] 36 patients
+INFO [CONCEPTS] maximum visit text length: 1279
+INFO [CONCEPTS] Flattening and tokenizing notes text concepts
+100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 36/36 [00:00<00:00, 4168.02it/s]
+INFO [CONCEPTS] Pretokenized notes concepts for 36 patients
+INFO [DATASET] output text targets: False
+INFO [TARGET] Use existing target tokenizer
+INFO Reformating for visit sequence learning based on: ../MIMIC-III/ADMISSIONS.csv
+100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 1221/1221 [00:00<00:00, 5854.05it/s]
+INFO Reformated data for visit sequence learning, num records: 1221
+INFO Maximum number of visits: 42
+INFO [NN] Training CGL with text: True
+INFO [NN] CGL number of context vectors 4
+INFO [NN] CGL MLP layers: [128, 4825]
+INFO [NN] cache graph forward pass: True
+INFO [CGL] task: diagnosis (binary: False), loss: BCEWithLogitsLoss()
+INFO ========================================
+INFO Run Training for 2 epochs
+INFO Num batches: 3078, size: 2
+INFO Val batches: 63
+INFO Learning rate: 0.0001
+INFO ========================================
+INFO [CGL] downstream training patience: 5
+INFO [TRAIN] gradient accumulation: 2
+INFO 	-> accumulated batch size: 4
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+HPU available: False, using: 0 HPUs
+/home/zwt/miniconda3/envs/mmugl/lib/python3.8/site-packages/pytorch_lightning/callbacks/model_checkpoint.py:611: UserWarning: Checkpoint directory dev/runs/tb/version_0/checkpoints exists and is not empty.
+  rank_zero_warn(f"Checkpoint directory {dirpath} exists and is not empty.")
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0,1]
+
+  | Name      | Type               | Params
+-------------------------------------------------
+0 | cgl_model | CglDownstreamModel | 11.4 M
+1 | loss_func | BCEWithLogitsLoss  | 0     
+-------------------------------------------------
+1.7 M     Trainable params
+9.7 M     Non-trainable params
+11.4 M    Total params
+45.402    Total estimated model params size (MB)
+Sanity Checking: 0it [00:00, ?it/s]/home/zwt/miniconda3/envs/mmugl/lib/python3.8/site-packages/pytorch_lightning/trainer/connectors/data_connector.py:240: PossibleUserWarning: The dataloader, val_dataloader 0, does not have many workers which may be a bottleneck. Consider increasing the value of the `num_workers` argument` (try 32 which is the number of cpus on this machine) in the `DataLoader` init to improve performance.
+  rank_zero_warn(
+/home/zwt/miniconda3/envs/mmugl/lib/python3.8/site-packages/pytorch_lightning/trainer/connectors/data_connector.py:240: PossibleUserWarning: The dataloader, train_dataloader, does not have many workers which may be a bottleneck. Consider increasing the value of the `num_workers` argument` (try 32 which is the number of cpus on this machine) in the `DataLoader` init to improve performance.
+  rank_zero_warn(
+Epoch 1: 100%|██████████████████████████████████| 3141/3141 [02:10<00:00, 24.13it/s, loss=0.013, v_num=0, train/batch_loss=0.0075, train/loss=0.00689, val/loss=0.0131, val_down/auroc=0.940]
+INFO Load best validation loss model: dev/runs/tb/version_0/checkpoints/epoch=1-step=3078.ckpt                                                   
+INFO Missing keys: []
+INFO Unexpected keys: []
+INFO Store cgl model to dev/runs/model
+INFO Running final validation
+INFO Validation set:
+100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 63/63 [00:01<00:00, 55.11it/s]
+INFO Best F1 0.133, AuROC: 0.940, t: 0.01
+INFO ----- Sample prediction -----
+INFO Predict: 00845 03842 0388 0389 04104 04111 0413 0414 0417 04185 042 07054 07070 1120 1122 1629 1970 1977 1983 1985 2449 25000 25002 25040 25050 25060 25080 2639 2720 2724 2749 2760 2761 2762 2763 2765 27651 27652 2766 2767 2768 27800 27801 2800 2809 2841 2851 28521 28522 28529 2859 2866 2869 2874 2875 28860 29181 2930 29410 2948 29680 30000 3004 30391 3051 311 32723 3310 3314 3320 33829 3453 34590 3481 34830 34839 3485 34982 3572 36201 3659 3970 4019 40390 40391 41071 412 41400 41401 4148 41519 4168 4239 4240 4241 4254 4271 42731 42732 4275 42789 4280 42821 42822 42823 42830 42832 42833 431 43310 4373 43811 43889 44024 4414 4439 45341 4538 45829 4589 45981 4821 48241 486 49121 4928 49320 49322 49390 496 5070 5119 5180 5185 51881 51882 51883 51884 51889 51919 53081 53550 5363 5533 5569 5570 5601 56210 56400 570 5712 5715 5723 5728 5770 5771 5781 5789 58381 5845 5849 5853 5856 5859 5990 5997 60000 6826 70703 70705 70714 70722 7140 71590 7242 73300 7746 78039 7850 78551 78552 7863 78720 78791 78820 78959 7907 79092 79902 99591 99592 99662 99674 99681 9971 99811 99812 9982 99831 99859 E8780 E8781 E8782 E8788 E8798 E8889 E9320 E9331 E9342 V090 V1005 V1011 V103 V1046 V1052 V1082 V1251 V1254 V153 V1581 V1582 V422 V433 V4364 V4365 V440 V441 V4501 V4502 V4511 V4581 V4582 V4589 V4611 V462 V4986 V5861 V5865 V5867 V667 V707 V8741
+INFO Target : 135 2749 27652 2851 4241 4280 42821 49121 60000 99811 E8788 V5865
+INFO -----------------------------
+INFO Test set:
+100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 611/611 [00:08<00:00, 71.22it/s]
+INFO Best F1 0.124, AuROC: 0.940, t: 0.01
+INFO ----- Sample prediction -----
+INFO Predict: 00845 03842 0388 0389 04104 04111 0413 0414 0417 04185 042 07054 07070 1120 1122 1629 1970 1977 1983 1985 2449 25000 25002 25040 25050 25060 25080 2639 2720 2724 2749 2760 2761 2762 2763 2765 27651 27652 2766 2767 2768 27800 27801 2800 2809 2841 2851 28521 28522 28529 2859 2866 2869 2875 28860 29181 2930 29410 2948 29680 30000 3004 30391 3051 311 32723 3310 3314 3320 33829 3453 34590 3481 34830 34839 3485 34982 3572 36201 3659 3970 4019 40390 40391 41071 412 41400 41401 4148 41519 4168 4239 4240 4241 4254 4271 42731 42732 4275 42789 4280 42821 42822 42823 42830 42832 42833 431 43310 4373 43811 43889 44024 4414 4439 45341 4538 45829 4589 45981 4821 48241 486 49121 4928 49320 49322 49390 496 5070 5119 5180 5185 51881 51882 51883 51884 51889 51919 53081 53550 5363 5533 5569 5570 5601 56210 56400 570 5712 5715 5723 5728 5770 5771 5781 5789 58381 5845 5849 5853 5856 5859 5990 5997 60000 6826 70703 70705 70714 70722 71590 7242 73300 7746 78039 7850 78551 78552 7863 78720 78791 78820 78959 7907 79092 79902 99591 99592 99662 99674 99681 9971 99811 99812 9982 99831 99859 E8780 E8781 E8782 E8788 E8798 E8889 E9320 E9331 E9342 V090 V1005 V1011 V103 V1046 V1052 V1082 V1251 V1254 V153 V1581 V1582 V422 V433 V4364 V4365 V440 V441 V4501 V4502 V4511 V4581 V4582 V4589 V4611 V462 V4986 V5861 V5865 V5867 V667 V707 V8741
+INFO Target : 1977 1985 25000 2720 37900 4019 42731 49121 51881 5990 V1011 V103
+INFO -----------------------------
+INFO ========================================
+INFO Finished Downstream Training
+INFO Val F1      : 0.133
+INFO Val F1 (inflated): 0.114
+INFO Val AuPRC   : 0.940
+INFO Val Thresh  : 0.01
+INFO Val R@20    : 0.26
+INFO Val R@40    : 0.36
+INFO 
+INFO Test F1      : 0.124
+INFO Test F1 (inflated): 0.107
+INFO Test AuPRC   : 0.940
+INFO Test Thresh  : 0.01
+INFO Test R@20    : 0.26
+INFO Test R@40    : 0.37
+INFO ========================================

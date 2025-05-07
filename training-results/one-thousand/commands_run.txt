@@ -1,0 +1,91 @@
+-----------------------------------------------------------------------
+
+Extracting concepts after preprocessing using QuickUMLS
+
+-----------------------------------------------------------------------
+
+python dev/text_concept_extraction.py \
+  --output data \
+  --name base \
+  --workers 4 \
+  --mimic_path ../MIMIC-III \
+  --quickumls_path ../QuickUMLS \
+  --window 6 \
+  --threshold 0.9 \
+  --similarity jaccard
+  --test 1000
+
+-----------------------------------------------------------------------
+
+UMLS Graph Extraction script run
+
+-----------------------------------------------------------------------
+
+
+python dev/umls_graph_extraction.py \
+  --output data/umls_graph.pkl \
+  --workers 4 \
+  --text_concepts data/noteevents_test_run_jaccard_0.9_w6.pkl \
+  --use_categories \
+  --icd_codes data/disease_codes_all.txt \
+  --atc_codes data/med_codes_all.txt \
+  --build_code_trees \
+  --umls_path ../UMLS \
+  --grow_hops 0 \
+  --reduce_vocabularies \
+  --add_sab \
+  --add_sapbert
+
+
+-----------------------------------------------------------------------
+
+Training and evaluation script run.
+
+-----------------------------------------------------------------------
+
+python dev/run_training_concepts.py \
+  --name diagnosis_test \
+  --logdir dev/runs \
+  --data_dir data \
+  --code_mappings data/code_mappings \
+  --epochs 2 \
+  --num_workers 2 \
+  --grad_acc 1 \
+  --batch_size 4 \
+  --down_batch_size 2 \
+  --down_grad_acc 2 \
+  --down_learning_rate 0.0001 \
+  --down_es 5 \
+  --embedding_dim 128 \
+  --graph_num_layers 1 \
+  --graph_num_filters 1 \
+  --gnn_operator SAGEConv \
+  --attention_heads 1 \
+  --feedforward_dim 128 \
+  --num_blocks 1 \
+  --agg_mask_loss 0.25 \
+  --mlp_dim 64 \
+  --mlp_num_layers 1 \
+  --freeze_embeddings \
+  --store_pretrainmodel \
+  --store_downmodel \
+  --pretrain \
+  --pretrain_es loss_total \
+  --pretrain_patience 3 \
+  --split_mode cgl \
+  --icd_codes data/disease_codes_all.txt \
+  --down_icd_codes data/cgl_mimic3_disease_codes.txt \
+  --atc_codes data/med_codes_all.txt \
+  --diagnosis_csv ../MIMIC-III/DIAGNOSES_ICD.csv \
+  --prescription_csv ../MIMIC-III/PRESCRIPTIONS.csv \
+  --admission_csv ../MIMIC-III/ADMISSIONS.csv \
+  --umls_graph data/umls_graph.pkl \
+  --notes_concepts data/noteevents_test_run_jaccard_0.9_w6.pkl \
+  --max_visit_text_length 1279 \
+  --downstream_cgl \
+  --cgl_num_contexts 4 \
+  --cgl_task diagnosis \
+  --down_mlp_dim 0 \
+  --down_mlp_num_layers 0 \
+  --random_state 1111 \
+  --verbose
