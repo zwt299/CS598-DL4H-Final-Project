@@ -48,7 +48,7 @@ python dev/run_training_concepts.py \
   --logdir dev/runs \
   --data_dir data \
   --code_mappings data/code_mappings \
-  --epochs 2 \
+  --epochs 50 \
   --num_workers 2 \
   --grad_acc 1 \
   --batch_size 4 \

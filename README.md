@@ -91,6 +91,12 @@ Running the first two scripts does some mandatory preprocessing steps to perform
 I have attached a file under train-results subfolders called `training_and_eval_log.txt` which shows what a run for the third script looks like.
 
 
+NEW FUNCTIONALITY:
+One can run the file in similar format to the commands_run for `run_training_concepts.py` but instead use `run_training_concepts_focal.py` with param `--loss focal` to try a new loss function implementation.
+
+I have included results from a sample run with the same configs as the fifty thousand notes run, but using the new script and loss param to set focal loss. Those results are under `training_and_eval_log_focal.txt`
+
+
 ---------------------------------
 
 LLM Usage: 

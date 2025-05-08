@@ -1,0 +1,386 @@
+(mmugl) zwt@zwt-MS-7D86:~/CS598-DL4H-Final-Project/mmugl-main$ python dev/run_training_concepts.py   --name diagnosis_test   --logdir dev/runs   --data_dir data   --code_mappings data/code_mappings   --epochs 80   --num_workers 2   --grad_acc 1   --batch_size 4   --down_batch_size 2   --down_grad_acc 2   --down_learning_rate 0.0001   --down_es 5   --embedding_dim 128   --graph_num_layers 1   --graph_num_filters 1   --gnn_operator SAGEConv   --attention_heads 1   --feedforward_dim 128   --num_blocks 1   --agg_mask_loss 0.25   --mlp_dim 64   --mlp_num_layers 1   --freeze_embeddings   --store_pretrainmodel   --store_downmodel   --pretrain   --pretrain_es loss_total   --pretrain_patience 3   --split_mode cgl   --icd_codes data/disease_codes_all.txt   --down_icd_codes data/cgl_mimic3_disease_codes.txt   --atc_codes data/med_codes_all.txt   --diagnosis_csv ../MIMIC-III/DIAGNOSES_ICD.csv   --prescription_csv ../MIMIC-III/PRESCRIPTIONS.csv   --admission_csv ../MIMIC-III/ADMISSIONS.csv   --umls_graph data/umls_graph.pkl   --notes_concepts data/noteevents_test_run_jaccard_0.9_w6.pkl   --max_visit_text_length 1279   --downstream_cgl   --cgl_num_contexts 4   --cgl_task diagnosis   --down_mlp_dim 0   --down_mlp_num_layers 0   --random_state 1111   --verbose --store_graphmodel
+zwt-MS-7D86 root[92070] INFO ========================================
+zwt-MS-7D86 root[92070] INFO Start Training script
+zwt-MS-7D86 root[92070] INFO Host: zwt-MS-7D86
+zwt-MS-7D86 root[92070] INFO Torch device: NVIDIA GeForce RTX 4090
+zwt-MS-7D86 root[92070] INFO GPU Memory: 23.5 GB
+zwt-MS-7D86 root[92070] INFO Workers: 2
+zwt-MS-7D86 root[92070] INFO ========================================
+Global seed set to 1111
+zwt-MS-7D86 root[92070] INFO Load UMLS graph from: data/umls_graph.pkl
+zwt-MS-7D86 root[92070] INFO [ICD] Processing diagnosis table
+zwt-MS-7D86 root[92070] INFO [ICD] Table raw shape: (651047, 5)
+zwt-MS-7D86 root[92070] INFO [ICD] Table processed shape: (650940, 3)
+zwt-MS-7D86 root[92070] INFO [SPLIT cgl] train suggested: 6000
+zwt-MS-7D86 root[92070] INFO [SPLIT cgl] train loaded: 45171
+zwt-MS-7D86 root[92070] INFO [SPLIT cgl] intersect: 6000
+zwt-MS-7D86 root[92070] INFO [SPLIT] Created data splits, train: 45171, val: 125
+zwt-MS-7D86 root[92070] INFO Parsed 6984 diagnosis codes from provided file
+zwt-MS-7D86 root[92070] INFO Parsed 348 prescription codes from provided file
+zwt-MS-7D86 root[92070] INFO [DATA]----- TRAIN -----
+zwt-MS-7D86 root[92070] INFO [ICD] Processing diagnosis table
+zwt-MS-7D86 root[92070] INFO [ICD] Table raw shape: (651047, 5)
+zwt-MS-7D86 root[92070] INFO [ICD] Table processed shape: (650940, 3)
+zwt-MS-7D86 root[92070] INFO [ICD] Filtered patient ids, filtered shape: (609110, 3)
+zwt-MS-7D86 root[92070] INFO [CHECK 1] patient ids: 45171
+zwt-MS-7D86 root[92070] INFO [ICD] Remove non-vocabulary (size: 6984) codes, post: (609110, 3)
+zwt-MS-7D86 root[92070] INFO [CHECK 2] patient ids: 45171
+zwt-MS-7D86 root[92070] INFO [ATC] Processing prescriptions table
+/home/zwt/CS598-DL4H-Final-Project/mmugl-main/kg/kg/data/processing.py:187: DtypeWarning: Columns (11) have mixed types. Specify dtype option on import or set low_memory=False.
+  med_pd = pd.read_csv(file, dtype=ndc_types)
+zwt-MS-7D86 root[92070] INFO [ATC] Table raw shape: (4156450, 19)
+zwt-MS-7D86 root[92070] INFO [ATC] Preprocessed shape: (2987420, 5)
+zwt-MS-7D86 root[92070] INFO [ATC] Performed NDC -> RxNorm mapping, shape (2987420, 6)
+zwt-MS-7D86 root[92070] INFO [ATC] Performed NDC -> ATC4 mapping, final shape (1988696, 5)
+zwt-MS-7D86 root[92070] INFO Match (SUBJECT_ID, HADM_ID), diagnosis: (559813, 3), med: (1858182, 5)
+zwt-MS-7D86 root[92070] INFO [CHECK 3] patient ids: 37819
+zwt-MS-7D86 root[92070] INFO Grouping codes ICD9_CODE for (patients, admission), post shape (46958, 3)
+zwt-MS-7D86 root[92070] INFO Grouping codes ATC4 for (patients, admission), post shape (46958, 3)
+zwt-MS-7D86 root[92070] INFO [CHECK 4] patient ids: 37819
+zwt-MS-7D86 root[92070] INFO Filtered patients to `ICD9_CODE` count range (1, inf), filtered shape (46958, 3)
+zwt-MS-7D86 root[92070] INFO Filtered patients to `ATC4` count range (1, inf), filtered shape (46958, 3)
+zwt-MS-7D86 root[92070] INFO [CHECK 5] patient ids: 37819
+zwt-MS-7D86 root[92070] INFO Merged diagnosis and prescription codes, shape: (46958, 4)
+zwt-MS-7D86 root[92070] INFO [CHECK 6] patient ids: 37819
+zwt-MS-7D86 root[92070] INFO Max #codes per visit, ICD: 39, ATC: 78
+zwt-MS-7D86 root[92070] INFO  > configured: 63, final: 64
+zwt-MS-7D86 root[92070] INFO [UMLS] UMLS graph data on input
+zwt-MS-7D86 root[92070] INFO [CONCEPTS] Loading note concepts from: data/noteevents_test_run_jaccard_0.9_w6.pkl
+zwt-MS-7D86 root[92070] INFO [CONCEPTS] 774 patients
+zwt-MS-7D86 root[92070] INFO [CONCEPTS] maximum visit text length: 1279
+zwt-MS-7D86 root[92070] INFO [CONCEPTS] Flattening and tokenizing notes text concepts
+100%|████████████████████████████████████████████████████████████████| 774/774 [00:00<00:00, 2525.81it/s]
+zwt-MS-7D86 root[92070] INFO [CONCEPTS] Pretokenized notes concepts for 774 patients
+zwt-MS-7D86 root[92070] INFO [DATASET] output text targets: False
+zwt-MS-7D86 root[92070] INFO [DATA]----- VAL -----
+zwt-MS-7D86 root[92070] INFO [ICD] Processing diagnosis table
+zwt-MS-7D86 root[92070] INFO [ICD] Table raw shape: (651047, 5)
+zwt-MS-7D86 root[92070] INFO [ICD] Table processed shape: (650940, 3)
+zwt-MS-7D86 root[92070] INFO [ICD] Filtered patient ids, filtered shape: (3942, 3)
+zwt-MS-7D86 root[92070] INFO [CHECK 1] patient ids: 125
+zwt-MS-7D86 root[92070] INFO [ICD] Remove non-vocabulary (size: 6984) codes, post: (3942, 3)
+zwt-MS-7D86 root[92070] INFO [CHECK 2] patient ids: 125
+zwt-MS-7D86 root[92070] INFO [ATC] Processing prescriptions table
+/home/zwt/CS598-DL4H-Final-Project/mmugl-main/kg/kg/data/processing.py:187: DtypeWarning: Columns (11) have mixed types. Specify dtype option on import or set low_memory=False.
+  med_pd = pd.read_csv(file, dtype=ndc_types)
+zwt-MS-7D86 root[92070] INFO [ATC] Table raw shape: (4156450, 19)
+zwt-MS-7D86 root[92070] INFO [ATC] Preprocessed shape: (2987420, 5)
+zwt-MS-7D86 root[92070] INFO [ATC] Performed NDC -> RxNorm mapping, shape (2987420, 6)
+zwt-MS-7D86 root[92070] INFO [ATC] Performed NDC -> ATC4 mapping, final shape (1988696, 5)
+zwt-MS-7D86 root[92070] INFO Match (SUBJECT_ID, HADM_ID), diagnosis: (3702, 3), med: (12325, 5)
+zwt-MS-7D86 root[92070] INFO [CHECK 3] patient ids: 119
+zwt-MS-7D86 root[92070] INFO Grouping codes ICD9_CODE for (patients, admission), post shape (289, 3)
+zwt-MS-7D86 root[92070] INFO Grouping codes ATC4 for (patients, admission), post shape (289, 3)
+zwt-MS-7D86 root[92070] INFO [CHECK 4] patient ids: 119
+zwt-MS-7D86 root[92070] INFO Filtered patients to `ICD9_CODE` count range (1, inf), filtered shape (289, 3)
+zwt-MS-7D86 root[92070] INFO Filtered patients to `ATC4` count range (1, inf), filtered shape (289, 3)
+zwt-MS-7D86 root[92070] INFO [CHECK 5] patient ids: 119
+zwt-MS-7D86 root[92070] INFO Merged diagnosis and prescription codes, shape: (289, 4)
+zwt-MS-7D86 root[92070] INFO [CHECK 6] patient ids: 119
+zwt-MS-7D86 root[92070] INFO Use existing tokenizer
+zwt-MS-7D86 root[92070] INFO Max #codes per visit, ICD: 39, ATC: 48
+zwt-MS-7D86 root[92070] INFO  > configured: 63, final: 64
+zwt-MS-7D86 root[92070] INFO [UMLS] UMLS graph data on input
+zwt-MS-7D86 root[92070] INFO [CONCEPTS] Loading note concepts from: data/noteevents_test_run_jaccard_0.9_w6.pkl
+zwt-MS-7D86 root[92070] INFO [CONCEPTS] 774 patients
+zwt-MS-7D86 root[92070] INFO [CONCEPTS] maximum visit text length: 1279
+zwt-MS-7D86 root[92070] INFO [CONCEPTS] Flattening and tokenizing notes text concepts
+100%|████████████████████████████████████████████████████████████████| 774/774 [00:00<00:00, 2348.48it/s]
+zwt-MS-7D86 root[92070] INFO [CONCEPTS] Pretokenized notes concepts for 774 patients
+zwt-MS-7D86 root[92070] INFO [DATASET] output text targets: False
+zwt-MS-7D86 root[92070] INFO [NN] Training with text: True, targets: False
+zwt-MS-7D86 root[92070] INFO [NN] cache graph forward pass: True
+zwt-MS-7D86 root[92070] INFO [NN] UMLS graph embedding module
+zwt-MS-7D86 root[92070] INFO [UMLS] loaded graph data, hops: 0
+zwt-MS-7D86 root[92070] INFO [GRAPH] using SapBert embeddings as initialization
+zwt-MS-7D86 root[92070] INFO [UMLS] use provided CUI vocabulary: 23864
+zwt-MS-7D86 root[92070] INFO [UMLS] loaded 99064 edges
+zwt-MS-7D86 root[92070] INFO [UMLS] Built SapBERT feature matrix: torch.Size([23864, 768])
+zwt-MS-7D86 root[92070] INFO UMLSGraphEmbedding has 23864 nodes
+zwt-MS-7D86 root[92070] INFO [GRAPH] Node aggregation: sum
+zwt-MS-7D86 root[92070] INFO Built: `UMLSGNN` 1 layers, 1 filters: SAGEConv:128
+zwt-MS-7D86 root[92070] INFO [EMBEDDING] Final embedding size: (3, 23861) = 23864
+zwt-MS-7D86 root[92070] INFO [INIT] DONT initialize co node embeddings
+zwt-MS-7D86 root[92070] INFO [NN] Initializing heads for aggregation loss
+zwt-MS-7D86 root[92070] INFO ----- Model -----
+zwt-MS-7D86 root[92070] INFO Embedding dimension: 128
+zwt-MS-7D86 root[92070] INFO GNN operator: SAGEConv
+zwt-MS-7D86 root[92070] INFO Graph layers: 1, staged: False
+zwt-MS-7D86 root[92070] INFO Transformer heads: 1, mlp: 128, blocks: 1
+zwt-MS-7D86 root[92070] INFO MLP dim: 64, layers: 1
+zwt-MS-7D86 root[92070] INFO Masked loss alpha: 0.25
+zwt-MS-7D86 root[92070] INFO Hungarian set loss alpha: 0.0
+zwt-MS-7D86 root[92070] INFO Co-occurrence loss alpha: 0.0
+zwt-MS-7D86 root[92070] INFO co-nodes latent space: False
+zwt-MS-7D86 root[92070] INFO Decoder Network: False
+zwt-MS-7D86 root[92070] INFO ----- ----- -----
+zwt-MS-7D86 root[92070] INFO Tensorboard logs at: dev/runs/diagnosis_test_20250507-1336
+zwt-MS-7D86 root[92070] INFO ========================================
+zwt-MS-7D86 root[92070] INFO Run Training for 80 epochs
+zwt-MS-7D86 root[92070] INFO Num batches: 11740, size: 4
+zwt-MS-7D86 root[92070] INFO Val batches: 73
+zwt-MS-7D86 root[92070] INFO Learning rate: 0.0005
+zwt-MS-7D86 root[92070] INFO ========================================
+zwt-MS-7D86 root[92070] INFO [TRAIN] early stopping on val/loss_total, patience 3
+zwt-MS-7D86 root[92070] INFO [TRAINER] Sampling 4 triplets per anchor id
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+HPU available: False, using: 0 HPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0,1]
+
+  | Name           | Type                            | Params
+-------------------------------------------------------------------
+0 | pretrain_model | JointCodePretrainingTransformer | 20.3 M
+1 | loss           | BCEWithLogitsLoss               | 0     
+-------------------------------------------------------------------
+1.7 M     Trainable params
+18.5 M    Non-trainable params
+20.3 M    Total params
+81.085    Total estimated model params size (MB)
+Sanity Checking: 0it [00:00, ?it/s]/home/zwt/miniconda3/envs/mmugl/lib/python3.8/site-packages/pytorch_lightning/trainer/connectors/data_connector.py:240: PossibleUserWarning: The dataloader, val_dataloader 0, does not have many workers which may be a bottleneck. Consider increasing the value of the `num_workers` argument` (try 32 which is the number of cpus on this machine) in the `DataLoader` init to improve performance.
+  rank_zero_warn(
+/home/zwt/miniconda3/envs/mmugl/lib/python3.8/site-packages/pytorch_lightning/trainer/connectors/data_connector.py:240: PossibleUserWarning: The dataloader, train_dataloader, does not have many workers which may be a bottleneck. Consider increasing the value of the `num_workers` argument` (try 32 which is the number of cpus on this machine) in the `DataLoader` init to improve performance.
+  rank_zero_warn(
+Epoch 25: 100%|█| 11813/11813 [01:24<00:00, 139.81it/s, loss=0.184, v_num=3, train/batch_loss=0.115, trai
+zwt-MS-7D86 root[92070] INFO Load best validation loss model: dev/runs/tb/version_3/checkpoints/epoch=19-step=234800.ckpt
+zwt-MS-7D86 root[92070] INFO Missing keys: []
+zwt-MS-7D86 root[92070] INFO Unexpected keys: []
+zwt-MS-7D86 root[92070] INFO Store pretrain model to dev/runs/model
+zwt-MS-7D86 root[92070] INFO Running final validation
+100%|███████████████████████████████████████████████████████████████████| 73/73 [00:00<00:00, 181.51it/s]
+zwt-MS-7D86 root[92070] INFO [d2d] jaccard: 0.258 f1: 0.387 prauc: 0.506 
+zwt-MS-7D86 root[92070] INFO [p2d] jaccard: 0.077 f1: 0.132 prauc: 0.266 
+zwt-MS-7D86 root[92070] INFO [p2p] jaccard: 0.766 f1: 0.862 prauc: 0.926 
+zwt-MS-7D86 root[92070] INFO [d2p] jaccard: 0.404 f1: 0.565 prauc: 0.688 
+zwt-MS-7D86 root[92070] INFO ========================================
+zwt-MS-7D86 root[92070] INFO Finished Pretraining Training
+zwt-MS-7D86 root[92070] INFO Trained for 26 epochs
+zwt-MS-7D86 root[92070] INFO Val Jaccard       : 0.376
+zwt-MS-7D86 root[92070] INFO Val F1            : 0.487
+zwt-MS-7D86 root[92070] INFO Val AuPRC         : 0.597
+zwt-MS-7D86 root[92070] INFO ========================================
+zwt-MS-7D86 root[92070] INFO Layer: UMLSGraphEmbedding(
+  (cui_feature_projector): Linear(in_features=768, out_features=128, bias=True)
+  (gnn): UMLSGNN(
+    (graph_convs): ModuleList(
+      (0): ModuleList(
+        (0): HeteroConv(num_relations=1)
+      )
+    )
+    (pool_stacks): ModuleList()
+  )
+) frozen, (8 params frozen)
+zwt-MS-7D86 root[92070] INFO Set downstream batchsize to 2
+zwt-MS-7D86 root[92070] INFO 
+zwt-MS-7D86 root[92070] INFO ========================================
+zwt-MS-7D86 root[92070] INFO Performing downstream DISEASE training
+zwt-MS-7D86 root[92070] INFO Task: diagnosis
+zwt-MS-7D86 root[92070] INFO With text: True
+zwt-MS-7D86 root[92070] INFO eICU: False
+zwt-MS-7D86 root[92070] INFO ========================================
+zwt-MS-7D86 root[92070] INFO [CGL] Parsed 4825 diagnosis codes from provided file
+zwt-MS-7D86 root[92070] INFO [DATA]----- TRAIN -----
+zwt-MS-7D86 root[92070] WARNING [DATASET] keeping no med patients: True
+zwt-MS-7D86 root[92070] INFO [ICD] Processing diagnosis table
+zwt-MS-7D86 root[92070] INFO [ICD] Table raw shape: (651047, 5)
+zwt-MS-7D86 root[92070] INFO [ICD] Table processed shape: (650940, 3)
+zwt-MS-7D86 root[92070] INFO [ICD] Filtered patient ids, filtered shape: (609110, 3)
+zwt-MS-7D86 root[92070] INFO [CHECK 1] patient ids: 45171
+zwt-MS-7D86 root[92070] INFO [ICD] Remove non-vocabulary (size: 6984) codes, post: (609110, 3)
+zwt-MS-7D86 root[92070] INFO [CHECK 2] patient ids: 45171
+zwt-MS-7D86 root[92070] INFO [ATC] Processing prescriptions table
+/home/zwt/CS598-DL4H-Final-Project/mmugl-main/kg/kg/data/processing.py:187: DtypeWarning: Columns (11) have mixed types. Specify dtype option on import or set low_memory=False.
+  med_pd = pd.read_csv(file, dtype=ndc_types)
+zwt-MS-7D86 root[92070] INFO [ATC] Table raw shape: (4156450, 19)
+zwt-MS-7D86 root[92070] INFO [ATC] Preprocessed shape: (2987420, 5)
+zwt-MS-7D86 root[92070] INFO [ATC] Performed NDC -> RxNorm mapping, shape (2987420, 6)
+zwt-MS-7D86 root[92070] INFO [ATC] Performed NDC -> ATC4 mapping, final shape (1988696, 5)
+zwt-MS-7D86 root[92070] INFO Filtered visit range (1, inf), final shape: (1988696, 5)
+zwt-MS-7D86 root[92070] INFO [ATC] Filtered patient ids, filtered shape: (1858217, 5)
+zwt-MS-7D86 root[92070] INFO [CHECK 3] patient ids: 45171
+zwt-MS-7D86 root[92070] INFO Grouping codes ICD9_CODE for (patients, admission), post shape (55610, 3)
+zwt-MS-7D86 root[92070] INFO Grouping codes ATC4 for (patients, admission), post shape (46962, 3)
+zwt-MS-7D86 root[92070] INFO [CHECK 4] patient ids: 45171
+zwt-MS-7D86 root[92070] INFO Filtered patients to `ICD9_CODE` count range (1, inf), filtered shape (55610, 3)
+zwt-MS-7D86 root[92070] INFO Filtered patients to `ATC4` count range (1, inf), filtered shape (46962, 3)
+zwt-MS-7D86 root[92070] INFO [CHECK 5] patient ids: 45171
+zwt-MS-7D86 root[92070] INFO Merged diagnosis and prescription codes, shape: (55614, 4)
+zwt-MS-7D86 root[92070] INFO [CHECK 6] patient ids: 45171
+zwt-MS-7D86 root[92070] INFO [ATC] imputing patients without prescriptions
+zwt-MS-7D86 root[92070] INFO Use existing tokenizer
+zwt-MS-7D86 root[92070] INFO Max #codes per visit, ICD: 39, ATC: 78
+zwt-MS-7D86 root[92070] INFO  > configured: 63, final: 64
+zwt-MS-7D86 root[92070] INFO [UMLS] UMLS graph data on input
+zwt-MS-7D86 root[92070] INFO [CONCEPTS] Loading note concepts from: data/noteevents_test_run_jaccard_0.9_w6.pkl
+zwt-MS-7D86 root[92070] INFO [CONCEPTS] 774 patients
+zwt-MS-7D86 root[92070] INFO [CONCEPTS] maximum visit text length: 1279
+zwt-MS-7D86 root[92070] INFO [CONCEPTS] Flattening and tokenizing notes text concepts
+100%|████████████████████████████████████████████████████████████████| 774/774 [00:00<00:00, 2505.80it/s]
+zwt-MS-7D86 root[92070] INFO [CONCEPTS] Pretokenized notes concepts for 774 patients
+zwt-MS-7D86 root[92070] INFO [DATASET] output text targets: False
+zwt-MS-7D86 root[92070] INFO [TARGET] Considering distinct target code set
+zwt-MS-7D86 root[92070] INFO [TARGET] Instatiating new target tokenizer, d: 4825
+zwt-MS-7D86 root[92070] INFO Reformating for visit sequence learning based on: ../MIMIC-III/ADMISSIONS.csv
+100%|████████████████████████████████████████████████████████████| 45171/45171 [00:06<00:00, 6848.09it/s]
+zwt-MS-7D86 root[92070] INFO Reformated data for visit sequence learning, num records: 6156
+zwt-MS-7D86 root[92070] INFO Maximum number of visits: 42
+zwt-MS-7D86 root[92070] INFO [DATA]----- VAL -----
+zwt-MS-7D86 root[92070] WARNING [DATASET] keeping no med patients: True
+zwt-MS-7D86 root[92070] INFO [ICD] Processing diagnosis table
+zwt-MS-7D86 root[92070] INFO [ICD] Table raw shape: (651047, 5)
+zwt-MS-7D86 root[92070] INFO [ICD] Table processed shape: (650940, 3)
+zwt-MS-7D86 root[92070] INFO [ICD] Filtered patient ids, filtered shape: (3942, 3)
+zwt-MS-7D86 root[92070] INFO [CHECK 1] patient ids: 125
+zwt-MS-7D86 root[92070] INFO [ICD] Remove non-vocabulary (size: 6984) codes, post: (3942, 3)
+zwt-MS-7D86 root[92070] INFO [CHECK 2] patient ids: 125
+zwt-MS-7D86 root[92070] INFO [ATC] Processing prescriptions table
+/home/zwt/CS598-DL4H-Final-Project/mmugl-main/kg/kg/data/processing.py:187: DtypeWarning: Columns (11) have mixed types. Specify dtype option on import or set low_memory=False.
+  med_pd = pd.read_csv(file, dtype=ndc_types)
+zwt-MS-7D86 root[92070] INFO [ATC] Table raw shape: (4156450, 19)
+zwt-MS-7D86 root[92070] INFO [ATC] Preprocessed shape: (2987420, 5)
+zwt-MS-7D86 root[92070] INFO [ATC] Performed NDC -> RxNorm mapping, shape (2987420, 6)
+zwt-MS-7D86 root[92070] INFO [ATC] Performed NDC -> ATC4 mapping, final shape (1988696, 5)
+zwt-MS-7D86 root[92070] INFO Filtered visit range (1, inf), final shape: (1988696, 5)
+zwt-MS-7D86 root[92070] INFO [ATC] Filtered patient ids, filtered shape: (12325, 5)
+zwt-MS-7D86 root[92070] INFO [CHECK 3] patient ids: 125
+zwt-MS-7D86 root[92070] INFO Grouping codes ICD9_CODE for (patients, admission), post shape (318, 3)
+zwt-MS-7D86 root[92070] INFO Grouping codes ATC4 for (patients, admission), post shape (289, 3)
+zwt-MS-7D86 root[92070] INFO [CHECK 4] patient ids: 125
+zwt-MS-7D86 root[92070] INFO Filtered patients to `ICD9_CODE` count range (1, inf), filtered shape (318, 3)
+zwt-MS-7D86 root[92070] INFO Filtered patients to `ATC4` count range (1, inf), filtered shape (289, 3)
+zwt-MS-7D86 root[92070] INFO [CHECK 5] patient ids: 125
+zwt-MS-7D86 root[92070] INFO Merged diagnosis and prescription codes, shape: (318, 4)
+zwt-MS-7D86 root[92070] INFO [CHECK 6] patient ids: 125
+zwt-MS-7D86 root[92070] INFO [ATC] imputing patients without prescriptions
+zwt-MS-7D86 root[92070] INFO Use existing tokenizer
+zwt-MS-7D86 root[92070] INFO Max #codes per visit, ICD: 39, ATC: 48
+zwt-MS-7D86 root[92070] INFO  > configured: 63, final: 64
+zwt-MS-7D86 root[92070] INFO [UMLS] UMLS graph data on input
+zwt-MS-7D86 root[92070] INFO [CONCEPTS] Loading note concepts from: data/noteevents_test_run_jaccard_0.9_w6.pkl
+zwt-MS-7D86 root[92070] INFO [CONCEPTS] 774 patients
+zwt-MS-7D86 root[92070] INFO [CONCEPTS] maximum visit text length: 1279
+zwt-MS-7D86 root[92070] INFO [CONCEPTS] Flattening and tokenizing notes text concepts
+100%|████████████████████████████████████████████████████████████████| 774/774 [00:00<00:00, 2494.92it/s]
+zwt-MS-7D86 root[92070] INFO [CONCEPTS] Pretokenized notes concepts for 774 patients
+zwt-MS-7D86 root[92070] INFO [DATASET] output text targets: False
+zwt-MS-7D86 root[92070] INFO [TARGET] Use existing target tokenizer
+zwt-MS-7D86 root[92070] INFO Reformating for visit sequence learning based on: ../MIMIC-III/ADMISSIONS.csv
+100%|████████████████████████████████████████████████████████████████| 125/125 [00:00<00:00, 5660.27it/s]
+zwt-MS-7D86 root[92070] INFO Reformated data for visit sequence learning, num records: 125
+zwt-MS-7D86 root[92070] INFO Maximum number of visits: 42
+zwt-MS-7D86 root[92070] INFO [DATA]----- TEST -----
+zwt-MS-7D86 root[92070] WARNING [DATASET] keeping no med patients: True
+zwt-MS-7D86 root[92070] INFO [ICD] Processing diagnosis table
+zwt-MS-7D86 root[92070] INFO [ICD] Table raw shape: (651047, 5)
+zwt-MS-7D86 root[92070] INFO [ICD] Table processed shape: (650940, 3)
+zwt-MS-7D86 root[92070] INFO [ICD] Filtered patient ids, filtered shape: (37888, 3)
+zwt-MS-7D86 root[92070] INFO [CHECK 1] patient ids: 1221
+zwt-MS-7D86 root[92070] INFO [ICD] Remove non-vocabulary (size: 6984) codes, post: (37888, 3)
+zwt-MS-7D86 root[92070] INFO [CHECK 2] patient ids: 1221
+zwt-MS-7D86 root[92070] INFO [ATC] Processing prescriptions table
+/home/zwt/CS598-DL4H-Final-Project/mmugl-main/kg/kg/data/processing.py:187: DtypeWarning: Columns (11) have mixed types. Specify dtype option on import or set low_memory=False.
+  med_pd = pd.read_csv(file, dtype=ndc_types)
+zwt-MS-7D86 root[92070] INFO [ATC] Table raw shape: (4156450, 19)
+zwt-MS-7D86 root[92070] INFO [ATC] Preprocessed shape: (2987420, 5)
+zwt-MS-7D86 root[92070] INFO [ATC] Performed NDC -> RxNorm mapping, shape (2987420, 6)
+zwt-MS-7D86 root[92070] INFO [ATC] Performed NDC -> ATC4 mapping, final shape (1988696, 5)
+zwt-MS-7D86 root[92070] INFO Filtered visit range (1, inf), final shape: (1988696, 5)
+zwt-MS-7D86 root[92070] INFO [ATC] Filtered patient ids, filtered shape: (118153, 5)
+zwt-MS-7D86 root[92070] INFO [CHECK 3] patient ids: 1221
+zwt-MS-7D86 root[92070] INFO Grouping codes ICD9_CODE for (patients, admission), post shape (3001, 3)
+zwt-MS-7D86 root[92070] INFO Grouping codes ATC4 for (patients, admission), post shape (2677, 3)
+zwt-MS-7D86 root[92070] INFO [CHECK 4] patient ids: 1221
+zwt-MS-7D86 root[92070] INFO Filtered patients to `ICD9_CODE` count range (1, inf), filtered shape (3001, 3)
+zwt-MS-7D86 root[92070] INFO Filtered patients to `ATC4` count range (1, inf), filtered shape (2677, 3)
+zwt-MS-7D86 root[92070] INFO [CHECK 5] patient ids: 1221
+zwt-MS-7D86 root[92070] INFO Merged diagnosis and prescription codes, shape: (3001, 4)
+zwt-MS-7D86 root[92070] INFO [CHECK 6] patient ids: 1221
+zwt-MS-7D86 root[92070] INFO [ATC] imputing patients without prescriptions
+zwt-MS-7D86 root[92070] INFO Use existing tokenizer
+zwt-MS-7D86 root[92070] INFO Max #codes per visit, ICD: 39, ATC: 58
+zwt-MS-7D86 root[92070] INFO  > configured: 63, final: 64
+zwt-MS-7D86 root[92070] INFO [UMLS] UMLS graph data on input
+zwt-MS-7D86 root[92070] INFO [CONCEPTS] Loading note concepts from: data/noteevents_test_run_jaccard_0.9_w6.pkl
+zwt-MS-7D86 root[92070] INFO [CONCEPTS] 774 patients
+zwt-MS-7D86 root[92070] INFO [CONCEPTS] maximum visit text length: 1279
+zwt-MS-7D86 root[92070] INFO [CONCEPTS] Flattening and tokenizing notes text concepts
+100%|████████████████████████████████████████████████████████████████| 774/774 [00:00<00:00, 2607.95it/s]
+zwt-MS-7D86 root[92070] INFO [CONCEPTS] Pretokenized notes concepts for 774 patients
+zwt-MS-7D86 root[92070] INFO [DATASET] output text targets: False
+zwt-MS-7D86 root[92070] INFO [TARGET] Use existing target tokenizer
+zwt-MS-7D86 root[92070] INFO Reformating for visit sequence learning based on: ../MIMIC-III/ADMISSIONS.csv
+100%|██████████████████████████████████████████████████████████████| 1221/1221 [00:00<00:00, 6216.67it/s]
+zwt-MS-7D86 root[92070] INFO Reformated data for visit sequence learning, num records: 1221
+zwt-MS-7D86 root[92070] INFO Maximum number of visits: 42
+zwt-MS-7D86 root[92070] INFO [NN] Training CGL with text: True
+zwt-MS-7D86 root[92070] INFO [NN] CGL number of context vectors 4
+zwt-MS-7D86 root[92070] INFO [NN] CGL MLP layers: [128, 4825]
+zwt-MS-7D86 root[92070] INFO [NN] cache graph forward pass: True
+zwt-MS-7D86 root[92070] INFO [CGL] task: diagnosis (binary: False), loss: BCEWithLogitsLoss()
+zwt-MS-7D86 root[92070] INFO ========================================
+zwt-MS-7D86 root[92070] INFO Run Training for 80 epochs
+zwt-MS-7D86 root[92070] INFO Num batches: 3078, size: 2
+zwt-MS-7D86 root[92070] INFO Val batches: 63
+zwt-MS-7D86 root[92070] INFO Learning rate: 0.0001
+zwt-MS-7D86 root[92070] INFO ========================================
+zwt-MS-7D86 root[92070] INFO [CGL] downstream training patience: 5
+zwt-MS-7D86 root[92070] INFO [TRAIN] gradient accumulation: 2
+zwt-MS-7D86 root[92070] INFO 	-> accumulated batch size: 4
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+HPU available: False, using: 0 HPUs
+/home/zwt/miniconda3/envs/mmugl/lib/python3.8/site-packages/pytorch_lightning/callbacks/model_checkpoint.py:611: UserWarning: Checkpoint directory dev/runs/tb/version_3/checkpoints exists and is not empty.
+  rank_zero_warn(f"Checkpoint directory {dirpath} exists and is not empty.")
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0,1]
+
+  | Name      | Type               | Params
+-------------------------------------------------
+0 | cgl_model | CglDownstreamModel | 20.3 M
+1 | loss_func | BCEWithLogitsLoss  | 0     
+-------------------------------------------------
+1.7 M     Trainable params
+18.7 M    Non-trainable params
+20.3 M    Total params
+81.328    Total estimated model params size (MB)
+Sanity Checking: 0it [00:00, ?it/s]/home/zwt/miniconda3/envs/mmugl/lib/python3.8/site-packages/pytorch_lightning/trainer/connectors/data_connector.py:240: PossibleUserWarning: The dataloader, val_dataloader 0, does not have many workers which may be a bottleneck. Consider increasing the value of the `num_workers` argument` (try 32 which is the number of cpus on this machine) in the `DataLoader` init to improve performance.
+  rank_zero_warn(
+/home/zwt/miniconda3/envs/mmugl/lib/python3.8/site-packages/pytorch_lightning/trainer/connectors/data_connector.py:240: PossibleUserWarning: The dataloader, train_dataloader, does not have many workers which may be a bottleneck. Consider increasing the value of the `num_workers` argument` (try 32 which is the number of cpus on this machine) in the `DataLoader` init to improve performance.
+  rank_zero_warn(
+Epoch 39: 100%|█| 3141/3141 [02:09<00:00, 24.28it/s, loss=0.00981, v_num=3, train/batch_loss=0.018, train
+zwt-MS-7D86 root[92070] INFO Load best validation loss model: dev/runs/tb/version_3/checkpoints/epoch=29-step=46170.ckpt
+zwt-MS-7D86 root[92070] INFO Missing keys: []
+zwt-MS-7D86 root[92070] INFO Unexpected keys: []
+zwt-MS-7D86 root[92070] INFO Store cgl model to dev/runs/model
+zwt-MS-7D86 root[92070] INFO Running final validation
+zwt-MS-7D86 root[92070] INFO Validation set:
+100%|████████████████████████████████████████████████████████████████████| 63/63 [00:01<00:00, 59.23it/s]
+zwt-MS-7D86 root[92070] INFO Best F1 0.240, AuROC: 0.962, t: 0.14
+zwt-MS-7D86 root[92070] INFO ----- Sample prediction -----
+zwt-MS-7D86 root[92070] INFO Predict: 25000 2720 2859 4019 412 41401 42731 4280 42830 486 49121 496 51881 53081 5849 5990 99592
+zwt-MS-7D86 root[92070] INFO Target : 135 2749 27652 2851 4241 4280 42821 49121 60000 99811 E8788 V5865
+zwt-MS-7D86 root[92070] INFO -----------------------------
+zwt-MS-7D86 root[92070] INFO Test set:
+100%|██████████████████████████████████████████████████████████████████| 611/611 [00:08<00:00, 68.09it/s]
+zwt-MS-7D86 root[92070] INFO Best F1 0.230, AuROC: 0.962, t: 0.11
+zwt-MS-7D86 root[92070] INFO ----- Sample prediction -----
+zwt-MS-7D86 root[92070] INFO Predict: 0389 1623 1628 1977 1983 25000 2720 2724 2762 2859 4019 412 41401 42731 4280 486 49121 496 51881 53081 5849 E9320 V1005 V1011 V1582 V4582 V5865
+zwt-MS-7D86 root[92070] INFO Target : 1977 1985 25000 2720 37900 4019 42731 49121 51881 5990 V1011 V103
+zwt-MS-7D86 root[92070] INFO -----------------------------
+zwt-MS-7D86 root[92070] INFO ========================================
+zwt-MS-7D86 root[92070] INFO Finished Downstream Training
+zwt-MS-7D86 root[92070] INFO Val F1      : 0.240
+zwt-MS-7D86 root[92070] INFO Val F1 (inflated): 0.240
+zwt-MS-7D86 root[92070] INFO Val AuPRC   : 0.962
+zwt-MS-7D86 root[92070] INFO Val Thresh  : 0.14
+zwt-MS-7D86 root[92070] INFO Val R@20    : 0.39
+zwt-MS-7D86 root[92070] INFO Val R@40    : 0.50
+zwt-MS-7D86 root[92070] INFO 
+zwt-MS-7D86 root[92070] INFO Test F1      : 0.230
+zwt-MS-7D86 root[92070] INFO Test F1 (inflated): 0.239
+zwt-MS-7D86 root[92070] INFO Test AuPRC   : 0.962
+zwt-MS-7D86 root[92070] INFO Test Thresh  : 0.11
+zwt-MS-7D86 root[92070] INFO Test R@20    : 0.40
+zwt-MS-7D86 root[92070] INFO Test R@40    : 0.51
+zwt-MS-7D86 root[92070] INFO ========================================
